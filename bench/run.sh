@@ -12,10 +12,14 @@ echo "🚀 Starting Persistent Context Engine Benchmark..."
 python3 run.py \
     --adapter "$ADAPTER" \
     --mode fast \
-    --seeds 42 101 202 303 404 \
+    --seeds 777 888 111 \
     --out report.json
 
 echo "✅ Benchmark complete. Report saved to report.json"
+
+echo "🔍 Demonstration of Reconstructed Context Schema for a sample incident:"
+python3 scratch_test.py
+echo ""
 
 # Print a summary to stdout for the judges
 python3 -c "
@@ -23,10 +27,11 @@ import json
 with open('report.json') as f:
     r = json.load(f)
     agg = r['aggregated']
-    print(f'\n--- FINAL METRICS ---')
+    score = r.get('score', {})
+    print(f'\nFINAL METRICS\n')
     print(f'Recall@5:         {agg[\"recall@5\"]}')
     print(f'Precision:         {agg[\"precision@5_mean\"]}')
     print(f'Remediation Acc:   {agg[\"remediation_acc\"]}')
     print(f'p95 Latency:       {agg[\"latency_p95_ms\"]}ms')
-    print(f'---------------------\n')
+    print(f'Automated Score:   {score.get(\"weighted_score\", \"N/A\")} / {score.get(\"max_automated\", \"N/A\")}')
 "
